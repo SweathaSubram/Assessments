@@ -1,0 +1,53 @@
+SQL INTERNAL ASSESSMENT:
+
+1.  select customerid from customerinteractions 
+where month="March" and year=2024 and 
+DataUsed > (select avg(dataused) from customerinteractions
+where month="march" and year=2024);
+
+2.   select customerid from customerinteractions c1
+where month="march" and year =2024 and callduration > (select callduration
+from customerinteractions c2 where month='February' and year = 2024 and c1.customerid= c2.customerid);
+
+3. select customerid from customerinteractions c1 where month='march' and year=2024 and
+MessageCount< (select messagecount from customerinteractions c2
+where month='february' and year=2024 and c1.customerid = c2.customerid) and 
+dataused > (select dataused from customerinteractions c3
+where month='february' and year=2024 and c1.customerid = c3.customerid);
+
+4. select ProductTypeID, sum(TotalSalesAmount) from quarterlysales
+group by producttypeid
+having ProductTypeID = 1;
+
+5.  select producttypeid, sum(totalsalesamount) from quarterlysales
+where quarter = 'Q1' and year = 2024
+group by ProductTypeID 
+order by sum(totalsalesamount) desc limit 1;
+
+6.  select producttypeid, (totalsalesamount/unitssold) as average_sales_per_unit_sold 
+from quarterlysales where quarter='q2' and year=2024 
+and ProductTypeID=1;
+
+7.  select region from sectorenergyconsumption where EnergySource in ("Solar","Wind")
+and month="march" and year=2024 and
+ConsumptionKWh > (select avg(consumptionkwh) from sectorenergyconsumption
+where energysource in ('solar','wind') and month="march" and year=2024);
+
+8.  select distinct sector from sectorenergyconsumption s1 where month='march' and year =2024
+and ConsumptionKWh > (select consumptionkwh from sectorenergyconsumption s2
+where month="february" and year=2024 and s1.sector=s2.sector);
+
+9.  select energysource, sum(consumptionkwh) from sectorenergyconsumption
+where month='february' and year=2024
+group by EnergySource;
+
+10.  select customername from insuranceactivities i1 where
+FeedbackScore > (select avg(feedbackscore) from insuranceactivities) or
+investigation = 'no';
+
+11.  select sum(annualpremium) from insuranceactivities
+where FeedbackScore > (select avg(feedbackscore) from insuranceactivities) and
+ClaimsCount > 0 ;
+
+12.  select policytype, avg(feedbackscore) from insuranceactivities
+group by policytype;
