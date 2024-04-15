@@ -1,0 +1,100 @@
+SQL FINAL ASSESSMENT:
+
+1) select product_category, avg(sales_amount) from products join sales_records 
+using (product_id) where sales_date>= date_sub(curdate(), interval 1 month)
+group by product_category; 
+ 
+
+2) select product_ID, SUM(sales_amount), RANK() 
+OVER (ORDER BY SUM(sALES_AMOUNT) DESC) AS PRODUCT_RANK from sales_records 
+where year(sales_date) =year(curdate())
+group by product_ID ORDER BY SUM(sALES_AMOUNT) DESC LIMIT 3; 
+
+3)  select customer_id, sum(sales_amount), 
+sum(sales_amount)/(select sum(sales_amount) from sales_records) *100 as Percentage_contribution , rank() over 
+(order by sum(sales_amount) desc) as rank_customer from customers join sales_records
+using (customer_id) group by customer_id;
+
+4) select distinct customer_id, 
+case when count(customer_id) over (partition by customer_id) >=4 and sales_date >= date_sub(curdate(), interval 6 month)
+then "Consistent Buyers" 
+else "Occassional Buyers" 
+end as nature_of_buyers from customers join sales_records using (customer_id) ;
+
+5)  SELECT flight_id, flight_number,departure_airport,
+arrival_airport,avg(ticket_price) from tickets join flights using (flight_id) 
+group by flight_id;
+
+
+6)  SELECT flight_id, flight_number,departure_date, count(ticket_id) as tickets_sold
+from tickets join flights using (flight_id) 
+where month(ticket_date) = month(curdate()) -1
+group by flight_id order by count(ticket_id) desc;
+
+7)  select passenger_name,sum(ticket_price) as total_amount_Spent, frequent_flyer_status
+ from passengers join tickets using (passenger_id)
+group by passenger_name, frequent_flyer_status
+order by sum(ticket_price) desc limit 5;
+
+8)  select monthname(ticket_date) as month, count(ticket_id) as no_of_tickets_sold
+ from tickets group by monthname(ticket_date) order by count(ticket_id) desc limit 1;
+
+9)  select game_genre, player_id, avg(play_date)  
+from playerscores join games using (game_id)
+group by game_genre, player_id
+order by avg(play_date) desc;
+
+10) select game_id, game_name, count(player_id) as no_of_players 
+from playerscores join games using (game_id)
+group by game_id, game_name
+order by count(player_id) desc limit 3;
+
+11)  select game_id, game_name, avg(score) as Avg_score, max(score) as Max_score,
+ count(player_id) as no_of_players
+from playerscores join games using (game_id)
+group by game_id, game_name;
+
+12)  select distinct player_id, player_name, registration_date, max(play_date) over 
+(partition by player_id) as recent_activity from players 
+join playerscores using (player_id)
+where play_date < date_sub(curdate(),interval 1 month);
+
+
+13) select doctor_id, doctor_name, sum(cost) as total_Cost
+from treatments join doctors using (doctor_id)
+group by doctor_id, doctor_name
+order by sum(cost) desc limit 5;  
+
+14) select treatment_name, sum(cost) as revenue, sum(cost)/(select sum(cost) from
+treatments)*100 as Percentage_contribution from treatments
+group by treatment_name;
+
+15) select p1.patient_id, p1.patient_name, p1.admission_date, p1.discharge_date
+ from patients p1 
+join patients p2 on p1.patient_id = p2.patient_id
+where p1.admission_date < adddate(p2.discharge_date, interval 1 month) 
+AND P1.admission_date > P2.admission_date
+order by admission_date asc;
+
+16)  select diagnosis, gender, round(avg(datediff(discharge_date, admission_date))) as avg_los
+from patients group by diagnosis,gender;
+
+17) select department, semester, avg(grade) as avg_grade
+ from enrollments join courses using (course_id)
+ group by department, semester order by department, semester;
+
+18) select major, enrollment_year , count(student_id) as tot_students
+ from enrollments join students using (student_id)
+group by major, enrollment_year  order by count(student_id) desc limit 5;
+
+19) select student_id, student_name, semester,sum(credits) as tot_credits
+ from courses join enrollments using (course_id) 
+join students using (student_id)
+group by student_id, student_name,semester
+having sum(credits) >=50;
+
+20)  select enrollment_year, course_id,course_name ,count(student_id) as no_of_students 
+from courses join enrollments using (course_id)
+join students using (student_id) 
+group by enrollment_year, course_id , course_name
+order by enrollment_year asc ,count(student_id) desc;
